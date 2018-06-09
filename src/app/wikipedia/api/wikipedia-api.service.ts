@@ -16,11 +16,18 @@ export class WikipediaApiService {
      private http: HttpClient){
   }
 
+
   public loadPageInfo(pageTitle: string): Observable<PageInfo> {
-    console.log('loading info for page ' + pageTitle);
+    pageTitle = this.prepareTitleForSearch(pageTitle);
 
     return this.http.get(this.apiUrl, {params: this.createInfoParameters(pageTitle)})
       .pipe(map(this.toPageInfo));
+  }
+
+  private prepareTitleForSearch(title: string): string {
+    return title.split(' ')
+      .map(str => str.substring(0, 1).toUpperCase() + str.substring(1))
+      .join(' ');
   }
 
   public loadFirstLinkedTitles(pageTitle: string): Observable<PartialLinkList> {
@@ -77,7 +84,7 @@ export class WikipediaApiService {
         action: 'query',
         origin: '*',
         format: 'json',
-        redirects: '',
+        redirects: 'true',
         titles: pageTitle
       }
     });
@@ -89,7 +96,7 @@ export class WikipediaApiService {
       .append('prop', 'info|extracts')
       .append('exlimit', '1')
       .append('exchars', String(EXTRACT_SIZE))
-      .append('explaintext', '');
+      .append('explaintext', 'true');
   }
 
   private createLinkParameters(pageTitle: string) {
