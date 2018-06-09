@@ -50,6 +50,8 @@ export class WikipediaApiService {
   }
 
   private createLinkList = (linkResponse: any): PartialLinkList => {
+    console.log(linkResponse)
+
     for(let pageId in linkResponse.query.pages) {
       const page: any = linkResponse.query.pages[pageId];
 

@@ -6,6 +6,7 @@ import {WikipediaModule} from "./wikipedia/wikipedia.module";
 import {WIKIPEDIA_URL} from "./wikipedia/config";
 import {FormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
+import { GraphComponent } from './wikipedia/graph/graph.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,6 @@ import {CommonModule} from "@angular/common";
   imports: [
     BrowserModule,
     CommonModule,
-    FormsModule,
     WikipediaModule
   ],
   providers: [

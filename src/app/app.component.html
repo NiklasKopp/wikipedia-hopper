@@ -1,13 +1,1 @@
-<form>
-<input type="text" class="form-control" id="title"
-       required
-       [(ngModel)]="title" name="title">
-
-<button (click)="onSearchClicked()">Search</button>
-</form>
-<p>{{extract}}</p>
-<ul>
-  <li *ngFor="let title of linkedTitles">
-    {{title}}
-  </li>
-</ul>
+<app-graph></app-graph>

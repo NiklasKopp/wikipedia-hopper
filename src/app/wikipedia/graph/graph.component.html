@@ -1,0 +1,9 @@
+<form>
+  <input type="text" class="form-control" id="title"
+         required
+         [(ngModel)]="title" name="title">
+
+  <button (click)="onSearchClicked()">Search</button>
+</form>
+
+<div #visContainer class="vis-container"></div>
