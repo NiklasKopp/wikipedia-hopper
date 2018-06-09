@@ -8,6 +8,8 @@ import {HttpClientModule} from "@angular/common/http";
     CommonModule,
     HttpClientModule
   ],
-  providers: [WikipediaApiService]
+  providers: [
+    WikipediaApiService
+  ]
 })
 export class WikipediaModule { }
