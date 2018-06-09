@@ -4,6 +4,8 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import {WikipediaModule} from "./wikipedia/wikipedia.module";
 import {WIKIPEDIA_URL} from "./wikipedia/config";
+import {FormsModule} from "@angular/forms";
+import {CommonModule} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -11,6 +13,8 @@ import {WIKIPEDIA_URL} from "./wikipedia/config";
   ],
   imports: [
     BrowserModule,
+    CommonModule,
+    FormsModule,
     WikipediaModule
   ],
   providers: [

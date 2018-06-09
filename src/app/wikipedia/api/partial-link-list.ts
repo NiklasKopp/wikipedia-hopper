@@ -1,6 +1,7 @@
 export class PartialLinkList {
   constructor(
-    public titles: string[],
+    public sourcePageTitle: string,
+    public linkedTitles: string[],
     public plcontinue: string) {
   }
 

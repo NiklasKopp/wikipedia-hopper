@@ -3,14 +3,8 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {WIKIPEDIA_URL} from "../config";
 import {PageInfo} from "./page-info";
 import {Observable} from "rxjs";
-import {concat, concatAll, flatMap, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {PartialLinkList} from "./partial-link-list";
-
-const BASE_QUERY = "action=query&titles=%s&format=json&redirects";
-const LINK_QUERY_PARAMS = BASE_QUERY + "&prop=links&pltitles&pllimit=max";
-const INFO_QUERY_PARAMS = BASE_QUERY
-  + "&prop=info|extracts&exchars=250&explaintext&inprop=url";
-const BACK_LINK_QUERY_PARAMS = "action=query&format=json&list=backlinks&bltitle=%s&bllimit=max";
 
 const EXTRACT_SIZE: number = 250;
 
@@ -23,21 +17,27 @@ export class WikipediaApiService {
   }
 
   public loadPageInfo(pageTitle: string): Observable<PageInfo> {
+    console.log('loading info for page ' + pageTitle);
+
     return this.http.get(this.apiUrl, {params: this.createInfoParameters(pageTitle)})
       .pipe(map(this.toPageInfo));
   }
 
   public loadFirstLinkedTitles(pageTitle: string): Observable<PartialLinkList> {
+    console.log('loading links for page ' + pageTitle);
+
     return this.http.get(this.apiUrl, {params: this.createLinkParameters(pageTitle)})
       .pipe(map(this.createLinkList));
   }
 
-  public loadNextLinkedTitles(pageTitle: string, previousList: PartialLinkList): Observable<PartialLinkList> {
+  public loadNextLinkedTitles(previousList: PartialLinkList = null): Observable<PartialLinkList> {
     if(previousList.isLast) {
-      return Observable.create(new PartialLinkList([], null));
+      return Observable.create(new PartialLinkList(previousList.sourcePageTitle,[], null));
     }
+    console.log('loading more for page ' + previousList.sourcePageTitle);
+
     return this.http.get(this.apiUrl, {
-      params: this.createLinkParameters(pageTitle)
+      params: this.createLinkParameters(previousList.sourcePageTitle)
         .append('plcontinue', previousList.plcontinue)})
         .pipe(map(this.createLinkList));
   }
@@ -46,17 +46,21 @@ export class WikipediaApiService {
     for(let pageId in linkResponse.query.pages) {
       const page: any = linkResponse.query.pages[pageId];
 
+      if(page.missing === '') {
+        continue;
+      }
+
       const links: string[] = page.links
         .filter(info => info.ns === 0)
         .map(info => info.title);
 
       if(linkResponse.continue && linkResponse.continue.plcontinue) {
-        return new PartialLinkList(links, linkResponse.continue.plcontinue);
+        return new PartialLinkList(page.title, links, linkResponse.continue.plcontinue);
       }else {
-        return new PartialLinkList(links, null);
+        return new PartialLinkList(page.title, links, null);
       }
     }
-    return new PartialLinkList([], null);
+    return new PartialLinkList('',[], null);
   };
 
   private toPageInfo = (response: any): PageInfo => {
